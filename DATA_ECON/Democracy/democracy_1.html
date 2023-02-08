@@ -1,0 +1,114 @@
+﻿<!doctype html>
+<meta charset="utf-8">
+
+<head>
+    <title>Ecuador's Laws</title>
+    <!-- <link href="https://fonts.googleapis.com/css?family=PT+Sans" rel="stylesheet"> -->
+</head>
+
+<!-- <script src="http://d3plus.org/js/d3.js"></script>
+<script src="http://d3plus.org/js/d3plus.js"></script>
+<script src="http://d3plus.org/js/topojson.js"></script>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="http://d3js.org/queue.v1.min.js"></script>
+<script src="http://d3js.org/topojson.v1.min.js"></script>
+<script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script> -->
+
+<script src="./js/d3.js"></script>
+<script src="./js/d3plus.js"></script>
+<script src="./js/topojson.js"></script>
+<script src="./js/d3.v3.min.js"></script>
+<script src="./js/queue.v1.min.js"></script>
+<script src="./js/topojson.v1.min.js"></script>
+<script src="./js/d3.tip.v0.6.3.js"></script>
+
+<style>
+
+    body {
+        margin: 1px;
+        padding: 2%;
+    }
+</style>
+
+<body>
+
+    <div class="page">
+        <div id="viz-container">
+            <div class="single_viz" id="treemap">
+                <!-- <div class="text">
+                  Transacciones por Industria
+                  <p>Write any text here </p>
+                </div> -->
+                <div class="chart" id="svg_treemap"></div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>// instantiate our D3plus viz object
+var viz = d3plus.viz()
+// here we get all the data we need from the server, firt the raw data, then
+// each of the attribute files
+
+  d3.tsv("./n3.tsv", function(error5,n3x) {
+    if (error5) return console.error(error5);
+    console.log(n3x);
+
+    d3.tsv("./n2.tsv", function(error4, n2x) {
+      if (error4) return console.error(error4);
+      console.log(n2x);
+
+      d3.tsv("./n1.tsv", function(error3, n1x) {
+        if (error3) return console.error(error3);
+        console.log(n1x);
+
+          d3.tsv("./democracy.tsv", function (error, ecuador) {
+            if (error) return console.error(error);
+            console.log(ecuador);
+            // Coerce data values to be numeric
+            ecuador.forEach(function(d) {
+            d.presented = +d.presented
+            d.published = +d.published
+            d.pri_debate = +d.pri_debate
+            d.seg_debate = +d.seg_debate
+            d.p_veto = +d.p_veto
+            d.t_pres1deb = +d.t_pres_1deb
+            d.t_pres2deb = +d.t_pres_2deb
+            d.t_pres_exe = +d.t_pres_exe;
+            });
+            console.log(ecuador);
+            // console.log(ecuador);
+
+            // set up attributes look up dictionary
+            var attrs = {"n1": n1x, "n2": n2x, "n3": n3x}
+            console.log(attrs);
+
+            // set attributes on our viz object
+            var visualization = d3plus.viz()
+            .container("#svg_treemap")
+            .messages({"branding":true})
+            .data(ecuador)
+            .attrs(attrs)
+            .type("tree_map")
+            .size("presented")
+            .id(["n3","n1","n2"])
+            .text({"n1":"n1_description","n2":"n2_description","n3":"n3_description"})
+            .labels({"align": "left", "valign": "top"})
+            .depth(0)
+            // .tooltip({"artist_id":["names"],"album_id":["name"],"song_id":["song_title"]})
+            .time("year_pres")
+            .ui([
+            {
+                "method" : "size",
+                    "value": ["presented", "published", "p_veto"]
+            }
+            ])
+            .draw()
+
+
+           })
+        })
+      })
+    })</script>
+
+</body>
